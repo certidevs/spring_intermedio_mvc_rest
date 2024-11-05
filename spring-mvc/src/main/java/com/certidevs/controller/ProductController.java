@@ -63,7 +63,15 @@ public class ProductController {
     }
 
     // ACCEDER AL FORMULARIO CON DATOS RELLENOS EN CADA CAMPO PARA EDITAR UN PRODUCTO EXISTENTE, QUE YA EXISTE EN BASE DE DATOS
-    // getFormToUpdate
+    @GetMapping("products/edit/{id}")
+    public String getFormToEdit(@PathVariable Long id, Model model) {
+        // productRepository.findById()
+        var product = Product.builder()
+                .name("monitor").id(id).price(32.1).active(false).quantity(3)
+                .build();
+        model.addAttribute("product", product);
+        return "product-form";
+    }
 
     // recibir el formulario enviado
     @PostMapping("products")
