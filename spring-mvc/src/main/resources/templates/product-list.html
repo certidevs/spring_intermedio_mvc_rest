@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado productos</title>
+</head>
+<body>
+<h1>Listado de productos</h1>
+
+<p th:text="${mensaje}"></p>
+<p th:text="${products}"></p>
+
+<ul>
+    <li th:each="product : ${products}">
+        <span th:text="${product.id}"></span>
+        <span th:text="${product.name}"></span>
+        <span th:text="${product.description}"></span>
+        <span th:text="${product.price}"></span>
+        <span th:text="${product.quantity}"></span>
+        <span th:text="${product.active}"></span>
+    </li>
+</ul>
+
+<table th:if="${products.size() > 0}">
+    <tr>
+        <th>Id</th>
+        <th>name</th>
+        <th>Descripción</th>
+        <th>Precio</th>
+        <th>Cantidad</th>
+        <th>Activo</th>
+        <th>Acciones</th>
+    </tr>
+    <tr th:each="product : ${products}">
+        <td th:text="${product.id}"></td>
+        <td th:text="${product.name}"></td>
+        <td th:text="${product.description}"></td>
+        <td th:text="${product.price}"></td>
+        <td th:text="${product.quantity}"></td>
+        <td th:text="${product.active}"></td>
+        <td>
+            <a href="">Ver</a>
+            <a href="">Editar</a>
+            <a href="">Borrar</a>
+        </td>
+    </tr>
+</table>
+<p th:unless="${products.size() > 0}">
+    No hay productos.
+</p>
+
+</body>
+</html>
