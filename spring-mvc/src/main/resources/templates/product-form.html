@@ -5,7 +5,12 @@
     <title>Formulario producto</title>
 </head>
 <body>
-<h1>Formulario producto</h1>
+<h1 th:if="${product.id}">
+    Editar producto <span th:text="${product.id}"></span>
+</h1>
+<h1 th:unless="${product.id}">
+    Crear nuevo producto
+</h1>
 
 <form method="POST" th:object="${product}" th:action="@{/products}">
     <div>
@@ -34,7 +39,8 @@
     </div>
         <!-- Si tenemos asociaciones es probable que haya que agregar
         selectores simple o múltiple <select> <option> -->
-    <button type="submit">Crear producto</button>
+    <button type="submit" th:if="${product.id}">Enviar edición</button>
+    <button type="submit" th:unless="${product.id}">Enviar creación</button>
 
 </form>
 

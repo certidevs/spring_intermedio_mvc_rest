@@ -19,7 +19,7 @@
     <p th:if="${product.active}">Activado</p>
     <p th:unless="${product.active}">Fuera de línea</p>
     <a th:href="@{/products/edit/{id}(id=${product.id})}">Editar</a>
-
+    <a th:href="@{/products/delete/{id}(id=${product.id})}">Borrar</a>
 </div>
 <p th:unless="${product}">Producto no encontrado.</p>
 
