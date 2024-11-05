@@ -1,17 +1,21 @@
 package com.certidevs.controller;
 
 import com.certidevs.model.Product;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 public class ProductController {
-
     // private ProductService productService;
   // private ProductRepository productRepository;
 
@@ -48,6 +52,29 @@ public class ProductController {
         return "product-detail";
     }
 
+    // ACCEDER AL FORMULARIO VACÍO PARA PODER CREAR UN NUEVO PRODUCTO
+    // http://localhost:8080/products/create
+    @GetMapping("products/create")
+    public String getFormToCreate(Model model) {
+        // Metodo para acceder a la pantalla formulario product-form para CREAR NUEVO PRODUCTO
+        // cargar producto vacío porque queremos rellenarlo en los input del form
+        model.addAttribute("product", new Product());
+        return "product-form";
+    }
+
+    // ACCEDER AL FORMULARIO CON DATOS RELLENOS EN CADA CAMPO PARA EDITAR UN PRODUCTO EXISTENTE, QUE YA EXISTE EN BASE DE DATOS
+    // getFormToUpdate
+
+    // recibir el formulario enviado
+    @PostMapping("products")
+    public String save(@ModelAttribute Product product) {
+
+        // productRepository.save(product)
+        System.out.println(product);
+        log.info("Received product from Form {}", product);
+
+        return "redirect:/products";
+    }
 
 
 }
