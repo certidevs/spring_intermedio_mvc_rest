@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -28,6 +29,23 @@ public class ProductController {
         model.addAttribute("products", products);
 
         return "product-list"; // vista
+    }
+
+    // http://localhost:8080/products/1
+    // http://localhost:8080/products/2
+    // http://localhost:8080/products/3
+    @GetMapping("products/{id}")
+    public String findById(@PathVariable Long id, Model model) {
+        // productRepository.findById(id)
+        var product = Product.builder()
+                .name("monitor").id(id).price(32.1).active(false).quantity(3)
+                .build();
+
+        model.addAttribute("product", product);
+        // ratingRepository.findAllByProductId() y crgar en el model
+        // technicalSpecifications.findAllByProductId()
+
+        return "product-detail";
     }
 
 

@@ -39,7 +39,7 @@
         <td th:text="${product.quantity}"></td>
         <td th:text="${product.active}"></td>
         <td>
-            <a href="">Ver</a>
+            <a th:href="@{/products/{id}(id=${product.id})}">Ver</a>
             <a href="">Editar</a>
             <a href="">Borrar</a>
         </td>
