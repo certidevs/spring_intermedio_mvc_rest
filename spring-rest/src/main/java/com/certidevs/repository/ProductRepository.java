@@ -11,5 +11,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByActiveTrueAndPriceBetween(Double priceStart, Double priceEnd);
 
+    List<Product> findByActiveTrueOrderByPriceDesc();
+
 
 }

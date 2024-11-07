@@ -20,7 +20,7 @@ public class Product {
     private String description;
     private Double price;
     private Integer quantity;
-    @Column(nullable = false, columnDefinition = "boolean default true")
+    @Column(columnDefinition = "boolean default true")
     private Boolean active;
 
 }
