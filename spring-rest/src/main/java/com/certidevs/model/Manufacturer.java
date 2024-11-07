@@ -3,7 +3,9 @@ package com.certidevs.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Builder
@@ -27,5 +29,9 @@ public class Manufacturer {
     private Integer year;
 
     private String country;
+
+    // Por defecto es LAZY
+    @OneToMany(mappedBy = "manufacturer")
+    List<Product> products = new ArrayList<>();
 
 }

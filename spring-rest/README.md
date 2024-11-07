@@ -15,7 +15,7 @@ https://certidevs.com/tutorial-sql-mysql-instalacion
 ## GLOSARIO DE ANOTACIONES:
 
 
-Lombok:
+Lombok (opcional)
 * @Getter
 * @Setter
 * @AllArgsConstructor
@@ -32,16 +32,19 @@ Spring:
 * @Controller (Controladores MVC)
 * @RestController (Controladores REST)
 * @Service
+* @Autowired
 
 JUnit:
 * @Test
 * @ExtendWith
+* @DisplayName
 
 JPA (Java/Jakarta Enterprise API)
 * @Entity
 * @Table (opcional)
 * @Id
 * @GeneratedValue (generar claves primarias)
+* @Column
 * Asociaciones: @ManyToOne, @OneToOne, @ManyToMany, @OneToMany
 
 
