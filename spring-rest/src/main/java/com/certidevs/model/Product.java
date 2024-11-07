@@ -15,12 +15,19 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+
+    //@Column(unique = true)
     private String name;
+
     @Column(length = 500)
     private String description;
     private Double price;
     private Integer quantity;
     @Column(columnDefinition = "boolean default true")
     private Boolean active;
+
+    // Evitar que traiga el fabricante por defecto, para optimizar consultas
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Manufacturer manufacturer;
 
 }

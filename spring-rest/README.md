@@ -12,3 +12,48 @@ https://certidevs.com/tutorial-sql-mysql-instalacion
 * JetBrains DataGrip integrado en IntelliJ IDEA Community
 
 
+## GLOSARIO DE ANOTACIONES:
+
+
+Lombok:
+* @Getter
+* @Setter
+* @AllArgsConstructor
+* @Builder
+* @NoArgsConstructor
+* @ToString
+
+Spring Test:
+
+* @DataJpaTest
+* @Sql
+
+Spring: 
+* @Controller (Controladores MVC)
+* @RestController (Controladores REST)
+* @Service
+
+JUnit:
+* @Test
+* @ExtendWith
+
+JPA (Java/Jakarta Enterprise API)
+* @Entity
+* @Table (opcional)
+* @Id
+* @GeneratedValue (generar claves primarias)
+* Asociaciones: @ManyToOne, @OneToOne, @ManyToMany, @OneToMany
+
+
+## GUIAS
+
+https://docs.spring.io/
+
+https://www.baeldung.com/
+
+https://certidevs.com/curso-spring-boot
+
+https://github.com/certidevs/hibernate
+
+https://github.com/certidevs/spring
+
