@@ -17,3 +17,5 @@ https://start.spring.io/#!type=maven-project&language=java&platformVersion=3.3.5
 
 
 ## Spring REST
+
+https://start.spring.io/#!type=maven-project&language=java&platformVersion=3.3.5&packaging=jar&jvmVersion=23&groupId=com.certidevs&artifactId=spring-rest&name=spring-rest&description=Demo%20project%20for%20Spring%20Boot&packageName=com.certidevs&dependencies=lombok,web,data-jpa,mysql,h2
