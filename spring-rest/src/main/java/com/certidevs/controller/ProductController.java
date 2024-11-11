@@ -4,14 +4,19 @@ import com.certidevs.model.Product;
 import com.certidevs.repository.ProductRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,6 +78,31 @@ public class ProductController {
     }
 
     // create
+    @PostMapping("products")
+    // Si queremos transaccionalidad con rollback, ideal moverlo a un servicio
+    // @Transactional(rollbackFor = DataIntegrityViolationException.class)
+    public ResponseEntity<Product> create(@RequestBody Product product) {
+        if (product.getId() != null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST); // 400 el producto no puede tener ID
+
+        // product.setAuthor(SecurityUtils.getCurrentUser())
+        // product.setCreationDate(LocalDateTime.now())
+
+        // if (product.getManufacturer().getId() == null)
+        //    manufacturerRepository.save(product.getManufacturer())
+
+          // var url = fileService.save(file)
+        // product.setImage(url);
+
+        try {
+            productRepository.save(product);
+            // return ResponseEntity.ok(product);
+            return ResponseEntity.created(new URI("/api/products/" + product.getId())).body(product);
+            // return ResponseEntity.status(HttpStatus.CREATED).body(product);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT); // 409 no se puede guardar porque genera conflicto
+        }
+    }
     // update
     // updatePartial
     // deleteById

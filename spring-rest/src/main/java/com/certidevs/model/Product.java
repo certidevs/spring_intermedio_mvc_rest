@@ -29,8 +29,10 @@ public class Product {
     private Boolean active;
 
     // Evitar que traiga el fabricante por defecto, para optimizar consultas
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @ManyToOne
+    // @ManyToOne(cascade = CascadeType.ALL)
+    // @ManyToOne(fetch = FetchType.LAZY)
+    //@JsonIgnore
     //@JsonIgnoreProperties({"products"})
     private Manufacturer manufacturer;
 

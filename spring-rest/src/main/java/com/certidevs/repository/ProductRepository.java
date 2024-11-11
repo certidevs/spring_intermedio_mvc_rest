@@ -1,9 +1,13 @@
 package com.certidevs.repository;
 
+import com.certidevs.model.Manufacturer;
 import com.certidevs.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +38,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     """)
     List<Product> findAllByManufacturerIdEager(Long id);
 
+    @Transactional
+    @Modifying
+    @Query("update Product p set p.manufacturer = ?1 where p.id in ?2")
+    int updateManufacturerByIdIn(Manufacturer manufacturer, List<Long> ids);
 
 
 }
