@@ -6,12 +6,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -96,15 +98,44 @@ public class ProductController {
 
         try {
             productRepository.save(product);
-            // return ResponseEntity.ok(product);
             return ResponseEntity.created(new URI("/api/products/" + product.getId())).body(product);
             // return ResponseEntity.status(HttpStatus.CREATED).body(product);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT); // 409 no se puede guardar porque genera conflicto
         }
     }
-    // update
-    // updatePartial
+
+    // IDEAL PRIMERO HACER UN FIND BY ID PARA TENER EL OBJETO ENTERO ANTES DE ACTUALIZARLO Y ENVIARLO AQUÍ
+    @PutMapping("products/{id}")
+    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody Product product) {
+        if (! productRepository.existsById(id))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        // findById productDB  setName, setPrice
+        try {
+            productRepository.save(product);
+            return ResponseEntity.ok(product);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+    }
+
+    @PatchMapping("products/{id}")
+    public ResponseEntity<Product> updatePartial(@PathVariable Long id, @RequestBody Product product) {
+        if (! productRepository.existsById(id))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        // Modificar solo aquellos atributos que nos envíen que no sean null:
+        return productRepository.findById(id).map(productDB -> {
+            if (StringUtils.hasText(product.getName())) productDB.setName(product.getName());
+            if (product.getPrice() != null) productDB.setPrice(product.getPrice());
+            if (product.getQuantity() != null) productDB.setQuantity(product.getQuantity());
+            productRepository.save(productDB);
+            return ResponseEntity.ok(productDB);
+            // BeanUtils.copyProperties();
+            // mapStruct con mapper
+        }).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
     // deleteById
     // deleteAll
 }
