@@ -1,6 +1,7 @@
 package com.certidevs.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,6 +30,8 @@ public class Product {
 
     // Evitar que traiga el fabricante por defecto, para optimizar consultas
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    //@JsonIgnoreProperties({"products"})
     private Manufacturer manufacturer;
 
 }

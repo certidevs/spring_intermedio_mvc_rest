@@ -5,6 +5,8 @@ import com.certidevs.repository.ProductRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,4 +59,22 @@ public class ProductController {
                 .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND)); // 404 si no hay producto
     }
 
+    @PostMapping("products/search") // Alternativa más avanzada: products?price.gte=40&price.lte=100
+    public ResponseEntity<List<Product>> findAllFilteringByExample(@RequestBody Product product) {
+        // Filtrados con API QBE Query By Example: https://certidevs.com/tutorial-spring-boot-query-by-example-qbe
+        // Filtrado con API Specification: https://certidevs.com/tutorial-spring-boot-specification
+        // Filtrado directamente sobre consultas JPQL creando un objeto y usandolo con expresiones SpEL
+
+//        ExampleMatcher matcher = ExampleMatcher.matching()
+//                .withMatcher("email", match -> match.startsWith())
+//                .withIgnorePaths("manufacturer");
+        var filteredProducts = productRepository.findAll(Example.of(product));
+        return ResponseEntity.ok(filteredProducts);
+    }
+
+    // create
+    // update
+    // updatePartial
+    // deleteById
+    // deleteAll
 }
