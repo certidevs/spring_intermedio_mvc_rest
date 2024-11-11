@@ -1,5 +1,7 @@
 package com.certidevs.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,6 +34,9 @@ public class Manufacturer {
 
     // Por defecto es LAZY
     @OneToMany(mappedBy = "manufacturer")
+    // CUIDADO: es una asociación bidireccional que puede causar problemas en JSON ciclos
+    // @JsonIgnore // hace que no salga la lista de productos
+    @JsonIgnoreProperties({"manufacturer", "active"})
     List<Product> products = new ArrayList<>();
 
 }
