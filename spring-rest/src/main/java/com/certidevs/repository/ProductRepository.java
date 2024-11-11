@@ -43,5 +43,17 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("update Product p set p.manufacturer = ?1 where p.id in ?2")
     int updateManufacturerByIdIn(Manufacturer manufacturer, List<Long> ids);
 
+    @Transactional
+    @Modifying
+    long deleteByManufacturer(Manufacturer manufacturer);
+
+    @Transactional
+    @Modifying
+    @Query("""
+    update Product p
+    set p.manufacturer = null
+    where p.manufacturer.id = ?1
+    """)
+    void updateSetManufacturerToNullByManufacturerId(Long id);
 
 }

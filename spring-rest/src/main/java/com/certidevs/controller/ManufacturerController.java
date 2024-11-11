@@ -64,5 +64,22 @@ public class ManufacturerController {
         }
     }
 
+    @DeleteMapping("manufacturers/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        try {
+            manufacturerRepository.findById(id).map(manufacturer -> {
+                // desasociar/borrar aquellas entidades que apunten al fabricante
+                // productRepository.deleteByManufacturer(manufacturer);
+                productRepository.updateSetManufacturerToNullByManufacturerId(id);
+                manufacturerRepository.deleteById(id);
+                return manufacturer;
+            });
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+
+    }
+
 
 }

@@ -136,6 +136,39 @@ public class ProductController {
             // mapStruct con mapper
         }).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
-    // deleteById
-    // deleteAll
+
+    @DeleteMapping("products/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        // opción 1: borrar sin comprobar nada:
+        try {
+            productRepository.deleteById(id);
+            return ResponseEntity.noContent().build(); // 204
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+
+        // Opción 2: desasociaciones si tenemos Entidades apuntando a Product: purchase, rating, invoice, favorite
+        // borrar directamente lo que apunta a product (extrema)
+        // purchaseRepository.deleteByProductId(id)
+        // desasociar
+        // purchaseRepository.updateSetProductToNullByProductId(id)
+
+        // Opción 3: desactivar el producto pero no borrar ni desasociar nada:
+//        productRepository.findById(id).map(productDB -> {
+//            productDB.setActive(false);
+//            productRepository.save(productDB);
+//            return productDB;
+//        });
+//        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("products")
+    public ResponseEntity<Void> deleteAllByIds(@RequestBody List<Long> ids) {
+        try {
+            productRepository.deleteAllByIdInBatch(ids);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+    }
 }
