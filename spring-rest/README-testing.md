@@ -11,9 +11,13 @@
 * Medibles
 * Confiables
 
+* @ExtendWith con Mockito a nivel de clase de test
+* @Mock de Mockito para crear Mocks de repositorios, servicios,....
+* @InjectMocks para inyectar los mocks en la clase a testear (System Under Test - SUT)
 
 * https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html
 * https://junit.org/junit5/docs/current/user-guide/#writing-tests
+
 
 ## TESTING INTEGRACIÓN PARCIAL
 
@@ -23,6 +27,12 @@
 * Sí puede probar las rutas de Spring y parámetros de Spring
 * Más lento que el unitario ya que tiene que cargar Spring
 
+* @WebMvcTest(ProductController.class)
+* @MockBean para crear mocks de repositorios, servicios
+* @Autowired MockMvc objeto que sirve para lanzar y testear peticiones HTTP a los controladores
+
+
+
 ## TESTING INTEGRACIÓN COMPLETA
 
 * JUnit 5 + Spring Test
@@ -30,6 +40,12 @@
 * Se carga la base de datos y depencias
 * Más lento aún
 * Prueba la integración de todas las capas tal y como sería una ejecución real en producción
+* No usaríamos Mocks.
+* Desafío: los sistemas externos
+* Uso de TestContainers para sistemas externos
+
+* @SpringBootTest
+
 
 ## TESTING DE INTERFAZ DE USUARIO / FUNCIONAL
 
