@@ -11,6 +11,10 @@
 * Medibles
 * Confiables
 
+
+* https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html
+* https://junit.org/junit5/docs/current/user-guide/#writing-tests
+
 ## TESTING INTEGRACIÓN PARCIAL
 
 * JUnit 5 + Mockito + Spring Test

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Example;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 /*
 Test unitario, NO carga Spring
+https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html
  */
 @ExtendWith(MockitoExtension.class)
 class ProductControllerUnitTest {
@@ -140,14 +142,126 @@ class ProductControllerUnitTest {
     @Test
     @DisplayName("Crear producto nuevo - OK")
     void create_ok() {
+        Product product = Product.builder().name("prod1").build();
 
+        when(productRepository.save(product)).thenAnswer(invocation -> {
+            Product productArgument = invocation.getArgument(0);
+            productArgument.setId(1L); // Simular que la DB le asigna un Id
+            return productArgument;
+        });
+
+        // assert de: status, headers y body
+        var response = productController.create(product); // tiene id null
+        assertNotNull(response);
+        assertNotNull(response.getHeaders());
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals("/api/products/1", response.getHeaders().getLocation().toString());
+        assertEquals(1, response.getBody().getId());
+        assertEquals("prod1", response.getBody().getName());
+
+        verify(productRepository).save(any(Product.class));
     }
 
     @Test
     @DisplayName("Crear producto nuevo - Conflicto por excepción de repositorio")
     void create_conflict () {
+        Product product = Product.builder().name("prod1").build();
 
+        // Simular que la base de datos (repositorio) lanza una excepción
+        // otros casos ejemplo: leer un archivo, lanzar peticiones HTTP a otros microservicios/apirest, enviar correo por smtp....
+        when(productRepository.save(product)).thenThrow(new DataIntegrityViolationException("Conflict"));
+
+        var exception = assertThrows(ResponseStatusException.class,
+                () -> productController.create(product)
+        );
+        assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
     }
 
+    @Test
+    @DisplayName("Actualizar producto existente - No encontrado")
+    void update_notFound() {
+        Product product = Product.builder().id(1L).name("prod1").build();
+        when(productRepository.existsById(1L)).thenReturn(false);
+
+        var exception = assertThrows(ResponseStatusException.class,
+                () -> productController.update(1L, product)
+        );
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Actualizar producto existente - OK")
+    void update_ok() {
+        Product product = Product.builder().id(1L).name("prod1").build();
+        when(productRepository.existsById(1L)).thenReturn(true);
+
+        var response = productController.update(1L , product);
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(product, response.getBody());
+        verify(productRepository).save(product);
+        verify(productRepository, never()).findById(anyLong());
+    }
+    @Test
+    void update_conflict() {
+        Product product = Product.builder().id(1L).name("prod1").build();
+
+        when(productRepository.existsById(1L)).thenReturn(true);
+        when(productRepository.save(product)).thenThrow(new DataIntegrityViolationException("Conflict"));
+
+        var exception = assertThrows(ResponseStatusException.class,
+                () -> productController.update(1L, product)
+        );
+        assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
+    }
+
+    @Test
+    void updatePartial_notFound() {
+        Product product = Product.builder().id(1L).name("prod1").build();
+        when(productRepository.existsById(1L)).thenReturn(false);
+
+        var exception = assertThrows(ResponseStatusException.class,
+                () -> productController.updatePartial(1L, product)
+        );
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
+
+
+
+    @Test
+    void updatePartial_OK() {
+        Product productOriginal = Product.builder().id(1L).name("prod1").price(20d).active(true).build();
+        Product productEdited = Product.builder().id(1L).name("prod1 edit").price(50d).active(false).build();
+
+        when(productRepository.existsById(1L)).thenReturn(true);
+        when(productRepository.findById(1L)).thenReturn(Optional.of(productOriginal));
+
+        var response = productController.updatePartial(1L, productEdited);
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        // Comprobar que se ha editado correctamente name, price, quantity
+        assertEquals("prod1 edit", response.getBody().getName());
+        assertEquals(50d, response.getBody().getPrice());
+        // CUIDADO: verificamos que se conserva el valor true de active
+        assertEquals(true, response.getBody().getActive());
+        assertTrue(response.getBody().getActive());
+    }
+
+    @Test
+    void updatePartial_findByIdNotFound() {
+        Product product = Product.builder().id(1L).name("prod1").build();
+
+        when(productRepository.existsById(1L)).thenReturn(true);
+        when(productRepository.findById(1L)).thenReturn(Optional.empty());
+
+        var exception = assertThrows(ResponseStatusException.class,
+                () -> productController.updatePartial(1L, product)
+        );
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
 
 }
