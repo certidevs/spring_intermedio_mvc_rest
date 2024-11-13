@@ -264,4 +264,66 @@ class ProductControllerUnitTest {
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
     }
 
+    @Test
+    void deleteById_OK() {
+
+        var response = productController.deleteById(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        assertNull(response.getBody());
+        verify(productRepository).deleteById(1L);
+    }
+
+    @Test
+    @DisplayName("Borrar producto por id - repositorio lanza excepción")
+    void deleteById_Conflict(){
+
+//        when(productRepository.deleteById(1L))
+//                .thenThrow(new DataIntegrityViolationException("conflicto"));
+
+        // AL SER VOID TENEMOS QUE CAMBIAR EL ENFOQUE when thenThrow a doThrow
+        doThrow(new DataIntegrityViolationException("conflicto"))
+                .when(productRepository)
+                .deleteById(1L);
+
+        var exception = assertThrows(
+                ResponseStatusException.class,
+                () -> productController.deleteById(1L)
+        );
+        assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
+
+    }
+
+
+    @Test
+    void deleteAllByIds() {
+        List<Long> ids = List.of(1L, 2L, 3L, 4L, 5L);
+
+        var response = productController.deleteAllByIds(ids);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        assertNull(response.getBody());
+        // este hace el borrado de todos los productos en una sola sentencia
+        verify(productRepository).deleteAllByIdInBatch(ids);
+        // este hace el borrado de cada producto en sentencias separadas
+        verify(productRepository, never()).deleteAllById(ids);
+
+    }
+
+
+    @Test
+    void deleteAllByIds_conflict() {
+        List<Long> ids = List.of(1L, 2L, 3L, 4L, 5L);
+
+        doThrow(new DataIntegrityViolationException("conflicto"))
+                .when(productRepository)
+                .deleteAllByIdInBatch(anyList());
+
+        var exception = assertThrows(
+                ResponseStatusException.class,
+                () -> productController.deleteAllByIds(ids)
+        );
+        assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
+
+    }
+
 }
