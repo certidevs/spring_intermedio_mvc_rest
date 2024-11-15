@@ -11,9 +11,16 @@
 * Medibles
 * Confiables
 
-* @ExtendWith con Mockito a nivel de clase de test
+* @ExtendWith(MockitoExtension.class) con Mockito a nivel de clase de test
 * @Mock de Mockito para crear Mocks de repositorios, servicios,....
-* @InjectMocks para inyectar los mocks en la clase a testear (System Under Test - SUT)
+* @InjectMocks de Mockito para inyectar los mocks en la clase a testear (System Under Test - SUT)
+
+* when()
+* thenReturn
+* thenAnswer
+* thenThrow
+* verify
+* doThrow
 
 * https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html
 * https://junit.org/junit5/docs/current/user-guide/#writing-tests
@@ -21,7 +28,7 @@
 
 ## TESTING INTEGRACIÓN PARCIAL
 
-* JUnit 5 + Mockito + Spring Test
+* JUnit 5 + Mockito + Spring Test + Spring Web
 * Se carga solo una parte de la aplicación Spring, por ejemplo un controlador
 * No se carga la base de datos
 * Sí puede probar las rutas de Spring y parámetros de Spring
@@ -35,7 +42,7 @@
 
 ## TESTING INTEGRACIÓN COMPLETA
 
-* JUnit 5 + Spring Test
+* JUnit 5 + Spring Test + Spring + JPA + Hibernate
 * Se carga la aplicación de Spring completa
 * Se carga la base de datos y depencias
 * Más lento aún

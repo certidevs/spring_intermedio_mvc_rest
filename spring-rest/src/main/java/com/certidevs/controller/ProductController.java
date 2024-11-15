@@ -44,7 +44,15 @@ public class ProductController {
 //        }).toList();
 
         var products = productRepository.findAll();
-        products.forEach(product -> product.setPrice(product.getPrice() * 1.21));
+        // Puede producir NullPointerException si los price son null:
+        // products.forEach(product -> product.setPrice(product.getPrice() * 1.21));
+
+        products.forEach(product -> {
+            if(product.getPrice() != null) product.setPrice(product.getPrice() * 1.21);
+        });
+//        products.forEach(product ->
+//           product.setPrice(Optional.ofNullable(product.getPrice()).orElse(0d) * 1.21)
+//        );
         return ResponseEntity.ok(products);
     }
 
