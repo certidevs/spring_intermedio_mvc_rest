@@ -38,6 +38,7 @@
 * @MockBean para crear mocks de repositorios, servicios
 * @Autowired MockMvc objeto que sirve para lanzar y testear peticiones HTTP a los controladores
 
+* CUIDADO: es común que las referencias a objetos cambien ya que al enviar datos en json al API REST jackson está creando un nuevo objeto en memoria con una referencia diferente al que tenemos en el test. CONSEJO: usar any()
 
 
 ## TESTING INTEGRACIÓN COMPLETA
