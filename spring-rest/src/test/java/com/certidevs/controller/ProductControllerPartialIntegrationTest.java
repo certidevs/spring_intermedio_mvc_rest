@@ -7,12 +7,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Example;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -269,6 +271,55 @@ class ProductControllerPartialIntegrationTest {
     }
 
 
+    @Test
+    @DisplayName("Borrar producto por id - OK")
+    void deleteById_OK() throws Exception {
+        mockMvc.perform(
+                delete("/api/products/{id}", 1L)
+        ).andExpect(status().isNoContent());
+
+        verify(productRepository).deleteById(1L);
+    }
+
+
+    @Test
+    @DisplayName("Cambia el producto de active true a active false")
+    void disableProduct_OK() throws Exception {
+
+        var product = Product.builder().id(1L).price(33d)
+                .active(true) // CUIDADO: asignamos active true para verificar que cambia a false
+                .build();
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+
+        mockMvc.perform(
+                delete("/api/products/disable/{id}", 1L)
+        ).andExpect(status().isNoContent());
+
+        var captor = ArgumentCaptor.forClass(Product.class);
+        verify(productRepository).save(captor.capture());
+
+        var productSaved = captor.getValue();
+        assertFalse(productSaved.getActive()); // active false
+    }
+
+
+
+    @Test
+    @DisplayName("Cambia el producto de active true a active false")
+    void deleteAllByIds() throws Exception {
+
+        List<Long> ids = List.of(1L ,2L, 3L);
+
+        mockMvc.perform(
+                delete("/api/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(ids))
+        ).andExpect(status().isNoContent());
+
+        verify(productRepository).deleteAllByIdInBatch(anyList());
+        verify(productRepository, never()).deleteAllById(anyList());
+    }
 
 
 

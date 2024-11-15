@@ -39,6 +39,7 @@
 * @Autowired MockMvc objeto que sirve para lanzar y testear peticiones HTTP a los controladores
 
 * CUIDADO: es común que las referencias a objetos cambien ya que al enviar datos en json al API REST jackson está creando un nuevo objeto en memoria con una referencia diferente al que tenemos en el test. CONSEJO: usar any()
+* Puede ser interesante usar ArgumentCaptor para capturar argumentos que se pasan a los mock y verificar si han cambiado valores de sus atributos. En el disableProduct lo hemos utilizado.
 
 
 ## TESTING INTEGRACIÓN COMPLETA

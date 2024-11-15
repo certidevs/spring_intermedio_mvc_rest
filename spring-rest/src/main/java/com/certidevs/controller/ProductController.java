@@ -169,6 +169,15 @@ public class ProductController {
 //        });
 //        return ResponseEntity.noContent().build();
     }
+    @DeleteMapping("products/disable/{id}")
+    public ResponseEntity<Void> disableProduct(@PathVariable Long id) {
+        productRepository.findById(id).map(productDB -> {
+            productDB.setActive(false);
+            productRepository.save(productDB);
+            return productDB;
+        });
+        return ResponseEntity.noContent().build();
+    }
 
     @DeleteMapping("products")
     public ResponseEntity<Void> deleteAllByIds(@RequestBody List<Long> ids) {
