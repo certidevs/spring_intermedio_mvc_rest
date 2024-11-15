@@ -18,10 +18,8 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /*
 MYSQL con TestContainers
@@ -137,6 +135,39 @@ public class ProductControllerIntegrationTest {
         // productRepository.findById(id).get()
     }
 
+    @Test
+    void update_OK() throws Exception{
+        var product = Product.builder().name("prod1").price(20d).build();
+        productRepository.save(product);
 
+        product.setName("prod1 edit");
+        product.setPrice(30d);
+
+        mockMvc.perform(put("/api/products/{id}", product.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(product))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(product.getId()))
+                .andExpect(jsonPath("$.name").value("prod1 edit"))
+                .andExpect(jsonPath("$.price").value(30d));
+
+        var productSaved = productRepository.findById(product.getId()).get();
+        assertEquals("prod1 edit", productSaved.getName());
+        assertEquals(30d, productSaved.getPrice());
+    }
+
+    @Test
+    void deleteById_OK() throws Exception {
+        var product = Product.builder().name("prod1").price(20d).build();
+        productRepository.save(product);
+
+        mockMvc.perform(delete("/api/products/{id}", product.getId())
+                )
+                .andExpect(status().isNoContent())
+                .andExpect(jsonPath("$").doesNotExist());
+
+        assertFalse(productRepository.existsById(product.getId()));
+    }
 
 }
