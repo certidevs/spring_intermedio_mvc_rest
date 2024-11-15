@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
